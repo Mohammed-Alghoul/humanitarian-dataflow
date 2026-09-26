@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import Chart from "chart.js/auto";
@@ -248,7 +247,7 @@ function Import({onImport}){
       onImport(validated);
     }});
   };
-  return <div className="space-y-4 sm:space-y-5 max-w-2xl">
+  return <div className="space-y-4 sm:space-y-5 w-full">
     <div>
       <h1 className="text-xl sm:text-2xl font-extrabold">Data Import</h1>
       <p className="text-[var(--sub)] text-sm mt-1">Upload a CSV of service/activity records. Columns: {REQUIRED.join(", ")}.</p>
@@ -407,7 +406,7 @@ function Report({rows}){
     return ()=>chartRef.current && chartRef.current.destroy();
   },[counts]);
   const today = new Date(); const periodStart = new Date(today.getTime()-90*86400000);
-  return <div className="space-y-4 sm:space-y-5 max-w-3xl">
+  return <div className="space-y-4 sm:space-y-5 w-full">
     <div className="no-print flex justify-end"><button type="button" className="btn w-full sm:w-auto" onClick={()=>window.print()}>Print report</button></div>
     <div className="card p-4 sm:p-6 md:p-8">
       <div className="text-[12.5px] font-semibold text-[var(--sub)]">Open Relief Network (Demo)</div>
