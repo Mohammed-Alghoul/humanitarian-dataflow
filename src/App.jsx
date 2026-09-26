@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useRef, useEffect } from "react";
 import Papa from "papaparse";
 import Chart from "chart.js/auto";
@@ -160,9 +161,9 @@ function Banner(){
 }
 function StatCard({label,value,tone}){
   const toneCls = tone==="err"?"text-[var(--err)]":tone==="warn"?"text-[var(--warn)]":tone==="ok"?"text-[var(--ok)]":"text-[var(--ink)]";
-  return <div className="card p-4">
-    <div className="text-[12.5px] font-semibold text-[var(--sub)]">{label}</div>
-    <div className={`text-3xl font-extrabold mt-1 ${toneCls}`}>{value}</div>
+  return <div className="card p-3 sm:p-4 min-w-0">
+    <div className="text-[12.5px] font-semibold text-[var(--sub)] truncate">{label}</div>
+    <div className={`text-2xl sm:text-3xl font-extrabold mt-1 ${toneCls}`}>{value}</div>
   </div>;
 }
 
@@ -211,10 +212,11 @@ function Dashboard({rows,setPage,setFocusId}){
       <IssueChart counts={counts}/>
     </div>
     <div className="card p-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <div className="font-semibold text-sm">Records needing review</div>
         <button className="btn-ghost" onClick={()=>setPage("review")}>Open review queue →</button>
       </div>
+      <div className="overflow-x-auto">
       <table>
         <thead><tr><th>Record</th><th>Project</th><th>Severity</th><th>Top issue</th></tr></thead>
         <tbody>
@@ -228,6 +230,7 @@ function Dashboard({rows,setPage,setFocusId}){
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   </div>;
 }
@@ -245,21 +248,21 @@ function Import({onImport}){
       onImport(validated);
     }});
   };
-  return <div className="space-y-5 max-w-2xl">
+  return <div className="space-y-4 sm:space-y-5 max-w-2xl">
     <div>
-      <h1 className="text-2xl font-extrabold">Data Import</h1>
+      <h1 className="text-xl sm:text-2xl font-extrabold">Data Import</h1>
       <p className="text-[var(--sub)] text-sm mt-1">Upload a CSV of service/activity records. Columns: {REQUIRED.join(", ")}.</p>
     </div>
-    <div className="card p-8 text-center border-dashed"
+    <div className="card upload-zone p-5 sm:p-8 text-center"
       onDragOver={e=>e.preventDefault()}
       onDrop={e=>{e.preventDefault(); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);}}>
       <p className="text-sm text-[var(--sub)] mb-3">Drag a CSV file here, or</p>
-      <button type="button" className="btn" onClick={()=>fileRef.current.click()}>Choose CSV file</button>
+      <button type="button" className="btn w-full sm:w-auto" onClick={()=>fileRef.current.click()}>Choose CSV file</button>
       <input type="file" accept=".csv" ref={fileRef}
         style={{position:"absolute",width:"1px",height:"1px",padding:0,margin:"-1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap",border:0}}
         onChange={e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); }}/>
       <div className="mt-4">
-        <button type="button" className="btn-ghost text-[13px]" onClick={downloadCsv}>Download sample dirty CSV</button>
+        <button type="button" className="btn-ghost text-[13px] w-full sm:w-auto" onClick={downloadCsv}>Download sample dirty CSV</button>
       </div>
     </div>
     {summary && <div className="card p-4 text-sm">
@@ -364,9 +367,9 @@ function RecordsList({rows,setPage,setFocusId,setFocusIssue}){
   const [q,setQ]=useState("");
   const filtered = rows.filter(r=> !q || JSON.stringify(r).toLowerCase().includes(q.toLowerCase()));
   return <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <h1 className="text-2xl font-extrabold">Records</h1>
-      <input placeholder="Search records…" value={q} onChange={e=>setQ(e.target.value)} className="w-56"/>
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <h1 className="text-xl sm:text-2xl font-extrabold">Records</h1>
+      <input placeholder="Search records…" value={q} onChange={e=>setQ(e.target.value)} className="w-full sm:w-56"/>
     </div>
     <div className="card overflow-x-auto">
       <table>
@@ -404,13 +407,13 @@ function Report({rows}){
     return ()=>chartRef.current && chartRef.current.destroy();
   },[counts]);
   const today = new Date(); const periodStart = new Date(today.getTime()-90*86400000);
-  return <div className="space-y-5 max-w-3xl">
-    <div className="no-print flex justify-end"><button type="button" className="btn" onClick={()=>window.print()}>Print report</button></div>
-    <div className="card p-8">
+  return <div className="space-y-4 sm:space-y-5 max-w-3xl">
+    <div className="no-print flex justify-end"><button type="button" className="btn w-full sm:w-auto" onClick={()=>window.print()}>Print report</button></div>
+    <div className="card p-4 sm:p-6 md:p-8">
       <div className="text-[12.5px] font-semibold text-[var(--sub)]">Open Relief Network (Demo)</div>
-      <h1 className="text-2xl font-extrabold mt-1">Humanitarian DataFlow — Data Quality Report</h1>
+      <h1 className="text-xl sm:text-2xl font-extrabold mt-1">Humanitarian DataFlow — Data Quality Report</h1>
       <p className="text-sm text-[var(--sub)] mt-1">Reporting period: {fmtDate(periodStart)} to {fmtDate(today)} · Republic of Talvora</p>
-      <div className="grid grid-cols-3 gap-3 mt-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6">
         <StatCard label="Records processed" value={rows.length}/>
         <StatCard label="Valid" value={counts.valid} tone="ok"/>
         <StatCard label="Warnings" value={counts.warning} tone="warn"/>
@@ -418,7 +421,7 @@ function Report({rows}){
         <StatCard label="Issues resolved" value={resolved} tone="ok"/>
         <StatCard label="Issues remaining" value={remaining} tone="warn"/>
       </div>
-      <div className="mt-6 h-56"><canvas ref={ref}></canvas></div>
+      <div className="mt-6 h-56 w-full max-w-full"><canvas ref={ref}></canvas></div>
       <p className="text-[12px] text-[var(--sub)] mt-6 border-t border-[var(--line)] pt-3">
         Demonstration system — fictional data only. Do not upload real data.
       </p>
@@ -450,21 +453,35 @@ function App(){
   },[rows, issueStatus]);
 
   const NAV = [["dashboard","Dashboard"],["import","Import"],["review","Review"],["records","Records"],["report","Report"]];
+  const [navOpen,setNavOpen]=useState(false);
+  const go = (k)=>{ setPage(k); setNavOpen(false); };
 
   return <div className="min-h-screen flex flex-col">
     <Banner/>
-    <header className="no-print bg-[var(--panel)] border-b border-[var(--line)] px-5 py-3 flex items-center justify-between flex-wrap gap-3">
-      <div>
-        <div className="font-extrabold text-[15px]">Humanitarian DataFlow</div>
-        <div className="text-[12px] text-[var(--sub)]">Open Relief Network (Demo)</div>
+    <header className="no-print bg-[var(--panel)] border-b border-[var(--line)] px-4 sm:px-5 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="font-extrabold text-[15px] truncate">Humanitarian DataFlow</div>
+          <div className="text-[12px] text-[var(--sub)] truncate">Open Relief Network (Demo)</div>
+        </div>
+        <nav className="hidden md:flex gap-1 flex-wrap">
+          {NAV.map(([k,label])=>(
+            <div key={k} className={`navlink ${page===k||(k==="records"&&page==="records-detail")?"active":""}`} onClick={()=>go(k)}>{label}</div>
+          ))}
+        </nav>
+        <button type="button" className="md:hidden btn-ghost text-[13px] shrink-0" aria-label="Toggle navigation" aria-expanded={navOpen} onClick={()=>setNavOpen(o=>!o)}>
+          {navOpen ? "Close" : "Menu"}
+        </button>
       </div>
-      <nav className="flex gap-1 flex-wrap">
-        {NAV.map(([k,label])=>(
-          <div key={k} className={`navlink ${page===k||(k==="records"&&page==="records-detail")?"active":""}`} onClick={()=>setPage(k)}>{label}</div>
-        ))}
-      </nav>
+      {navOpen && (
+        <nav className="md:hidden mt-3 flex flex-col gap-1">
+          {NAV.map(([k,label])=>(
+            <div key={k} className={`navlink text-left ${page===k||(k==="records"&&page==="records-detail")?"active":""}`} onClick={()=>go(k)}>{label}</div>
+          ))}
+        </nav>
+      )}
     </header>
-    <main className="flex-1 p-5 max-w-6xl w-full mx-auto">
+    <main className="flex-1 p-3 sm:p-5 max-w-6xl w-full mx-auto">
       {page==="dashboard" && <Dashboard rows={rows} setPage={setPage} setFocusId={setFocusId}/>}
       {page==="import" && <Import onImport={onImport}/>}
       {page==="review" && <Review rows={rows} issueStatus={issueStatus} setIssueStatus={setIssueStatus} setPage={setPage} setFocusId={setFocusId} setFocusIssue={setFocusIssue}/>}
